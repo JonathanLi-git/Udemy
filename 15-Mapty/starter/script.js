@@ -15,11 +15,14 @@ let map, mapEvent;
 class App {
     #map;
     #mapEvent; 
+    #workouts
+
 
     constructor() {
         this._getPosition()
         this._showForm()
         this._toggleElevationField()
+        this.#workouts = new Array();
     }
 
     _getPosition() {
@@ -50,6 +53,7 @@ class App {
     _showForm() {
         form.addEventListener('submit', function(e) {
             e.preventDefault()
+            this._newWorkout(e)
         
             inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = ''
             L.marker([this.#mapEvent.latlng.lat, this.#mapEvent.latlng.lng]).bindPopup(L.popup({
@@ -79,24 +83,112 @@ class App {
         })
     }
 
-    _newWorkout() {
+    _newWorkout(e) {
+        console.log(e)
+        e.preventDefault()
+        //get data from form
+        const type = inputType.value
+        const distance = +inputDistance.value
+        const duration = +inputDuration.value
+        let cadenceElevation = undefined
+        const {lat,lng} = this.#mapEvent.latlng
 
+        //check if data is valid
+        if(distance < 1 || duration < 1 || distance === NaN || duration === NaN) {
+            alert("Invalid input, please check the input")
+        }
+        //create object as running/cycling and add to workout array
+        if(type === "running") {
+            cadenceElevation = +inputCadence.value
+            const RunningWorkout = new Running([lat,lng], distance, duration, cadenceElevation)
+            this.#workouts.push(RunningWorkout)
+        }
+        else {
+            cadenceElevation = +inputElevation.value
+            const CyclingWorkout = new Cycling([lat,lng], distance, duration, cadenceElevation)
+            this.#workouts.push(CyclingWorkout)
+        }
+        
+
+
+        //render workout on map
+        
+        //render on list
+
+        //hide form/clear input fields
     }
 }
 
 class Workout {
-    constructor() {
+    date = new Date() 
+    id = (Date.now() + ''.slice(-10))
+    constructor(coords,distance,duration) {
+
+        this.coords = coords
+        this.distance = distance
+        this.duration = duration
+    }
+
+    id(){
 
     }
 
-    getTime() {
+    distance() {
 
     }
 
-    getDuration() {
+    duration () {
 
     }
 
-    
+    coords () {
+
+    }
+
+    date() {
+
+    }   
+}
+
+class Running extends Workout {
+    constructor(coords,distance,duration,cadence) {
+        super(coords,distance,duration)
+        this.cadence = cadence
+        const pace = this.calcPace()
+    }
+
+    name() {
+
+    }
+    cadence () {
+
+    }
+
+    calcPace() {
+        //miles per minute
+        this.pace = this.duration/this.distance
+        return this.pace
+    }
+}
+
+class Cycling extends Workout {
+    constructor(coords,distance,duration,elevationGain) {
+        super(coords,distance,duration)
+        this.elevationGain = elevationGain
+        this.calcSpeed()
+    }
+
+    name() {
+
+    }
+
+    elevationGain() {
+
+    }
+
+    calcSpeed() {
+        this.speed = this.distance/(this.duration/60)
+        return this.speed
+    }
 }
 const app = new App()
