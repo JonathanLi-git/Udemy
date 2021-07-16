@@ -208,7 +208,6 @@ class Running extends Workout {
             <span class="workout__icon">⏱</span>
             <span class="workout__value">${this.duration}</span>
             <span class="workout__unit">min</span>  
-
           </div>
           <div class="workout__details">
             <span class="workout__icon">⚡️</span>
@@ -272,7 +271,6 @@ class Cycling extends Workout {
         <span class="workout__value">${this.duration}</span>
         <span class="workout__unit">min</span>  
       </div>
-
       <div class="workout__details">
             <span class="workout__icon">⚡️</span>
             <span class="workout__value">${this.calcSpeed()}</span>
